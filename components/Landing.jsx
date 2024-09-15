@@ -20,7 +20,7 @@ const Landing = () => {
     //function handle onclick add friend
     const addfriend = async (friendname) => {
         try {
-            const response = await fetch('http://localhost:3500/addfriend', {
+            const response = await fetch('https://fbbackend-b4v6.onrender.com/addfriend', {
                 method: "POST",
                 headers: {
                     "content-type": "application/json",
@@ -59,7 +59,7 @@ const Landing = () => {
             return;
         }
         try {
-            const response = await fetch('http://localhost:3500/decision', {
+            const response = await fetch('https://fbbackend-b4v6.onrender.com/decision', {
                 method: "POST",
                 headers: {
                     "content-type": "application/json",
@@ -97,7 +97,7 @@ const Landing = () => {
             return;
         }
         try {
-            const response = await fetch('http://localhost:3500/search', {
+            const response = await fetch('https://fbbackend-b4v6.onrender.com/search', {
                 method: "POST",
                 headers: {
                     "content-type": 'application/json',
@@ -135,7 +135,7 @@ const Landing = () => {
             return;
         }
         try {
-            const response = await fetch('http://localhost:3500/unfriend',{
+            const response = await fetch('https://fbbackend-b4v6.onrender.com/unfriend',{
                 method:"POST",
                 headers:{
                     "content-type":"application/json",
@@ -166,7 +166,7 @@ const Landing = () => {
     // function to load all friends list
     const load = async () => {
         try {
-            const response = await fetch('http://localhost:3500/list', {
+            const response = await fetch('https://fbbackend-b4v6.onrender.com/list', {
                 method: "GET",
                 headers: {
                     "content-type": "application/json",

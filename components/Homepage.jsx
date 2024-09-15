@@ -64,7 +64,7 @@ export default function Homepage() {
             return;
         }
         try {
-            const response = await fetch('http://localhost:3500/login',{
+            const response = await fetch('https://fbbackend-b4v6.onrender.com/login',{
                 method:"POST",
                 headers:{
                     "content-type":"application/json"                },
@@ -114,7 +114,7 @@ export default function Homepage() {
             return;
         }
         try {
-            const response = await fetch('http://localhost:3500/create',{
+            const response = await fetch('https://fbbackend-b4v6.onrender.com/create',{
                 method:"POST",
                 headers:{
                     "content-type":"application/json"
