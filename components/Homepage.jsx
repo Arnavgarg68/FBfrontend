@@ -1,19 +1,24 @@
-import { React, useEffect, useState, useRef } from 'react'
-import Logo from "./materials/live-job-high-resolution-logo.png"
-import employee from "./materials/icons8-employee-100.png"
-import about from "./materials/icons8-about-100.png"
-import background from "./materials/background-homapage.png"
 import './componentsCss/homepage.css'
+import { React, useState, useRef } from 'react'
+import Logo from "./materials/live-job-high-resolution-logo.png"
+import employee from "./materials/icons8-employee.png"
+import about from "./materials/icons8-about.png"
+import background from "./materials/man-scroll-removebg-preview.png"
 import { useNavigate } from 'react-router-dom'
 import states from './materials/countries+states-simplified.json'
 import { ToastContainer, toast } from 'react-toastify'
 export default function Homepage() {
+    // to manage login/signup box appear
     const [login, setLogin] = useState(false);
     const [l, setL] = useState(false);
     const [s, setS] = useState(true);
+
+    // function to show or hide login/signupbox
     const loginswitchnavbar = () => {
         setLogin(true);
     }
+
+    // function to close login/signup box if clicked outside
     const loginswitch = (eve) => {
         const outer = document.querySelector('.homepage-login-box');
         const inner = document.querySelector('.homepage-login-box-inner-1');
@@ -21,10 +26,14 @@ export default function Homepage() {
             setLogin(false);
         }
     }
+
+    // fucntion to switch between singup and login
     const switchlogin = () => {
         setL((e) => !e);
         setS((e) => !e);
     }
+
+    // function to show or hide password on hover
     const passwordshow = () => {
         const element = document.getElementById("password");
         element.type = 'text';
@@ -33,11 +42,15 @@ export default function Homepage() {
         const element = document.getElementById("password");
         element.type = 'password';
     }
+
+    // variables and states for controlled rendering
     const loginUsername = useRef(null);
     const loginPassword = useRef(null);
     const signupUsername = useRef(null);
     const signupState = useRef(null);
     const signupPassword = useRef(null);
+
+    // user login handle submit function
     const loginsubmit = async(e) => {
         e.preventDefault();
         const username = loginUsername.current.value.trim(' ').toLowerCase();
@@ -69,14 +82,20 @@ export default function Homepage() {
                 toast.error(data.errormsg);
                 return;
             }
-            console.log(data);
-            localStorage.setItem('token',data.token);
-            navigate('/');
+            if(response.ok){
+                localStorage.setItem('token',data.token);
+                navigate('/landing');
+            }
+            else{
+                toast.warning("server loading")
+            }
         } catch (error) {
             toast.error("failed try after sometime");
         }
         
     }
+
+    // function to handle signup of user 
     const signupsubmit = async(e) => {
         e.preventDefault();
         const username = signupUsername.current.value.trim(' ').toLowerCase();
@@ -115,9 +134,14 @@ export default function Homepage() {
                 toast.error(data.errormsg);
                 return;
             }
-            console.log(data);
-            localStorage.setItem('token',data.token);
-            navigate('/');
+            if(response.ok){
+                console.log(data);
+                localStorage.setItem('token',data.token);
+                navigate('/landing');
+            }
+            else{
+                toast.warning("server loading")
+            }
         } catch (error) {
             toast.error("Issue in sending request try aftersometime")
         }
