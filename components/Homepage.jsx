@@ -7,12 +7,13 @@ import background from "./materials/man-scroll-removebg-preview.png"
 import { useNavigate } from 'react-router-dom'
 import states from './materials/countries+states-simplified.json'
 import { ToastContainer, toast } from 'react-toastify'
+import { Comment } from 'react-loader-spinner'
 export default function Homepage() {
     // to manage login/signup box appear
     const [login, setLogin] = useState(false);
     const [l, setL] = useState(false);
     const [s, setS] = useState(true);
-
+    const [isLoading, setisLoading] = useState(false);
     // function to show or hide login/signupbox
     const loginswitchnavbar = () => {
         setLogin(true);
@@ -51,98 +52,120 @@ export default function Homepage() {
     const signupPassword = useRef(null);
 
     // user login handle submit function
-    const loginsubmit = async(e) => {
+    const loginsubmit = async (e) => {
         e.preventDefault();
+        setisLoading(true);
         const username = loginUsername.current.value.trim(' ').toLowerCase();
         const password = loginPassword.current.value.trim(' ');
-        if(!username||!password){
+        if (!username || !password) {
             toast.error("Invalid form fields")
+            setisLoading(false);
             return;
         }
-        if(password.indexOf(' ')>0){
+        if (password.indexOf(' ') > 0) {
+        setisLoading(false);
             toast.warning("password cannot contain spaces")
             return;
         }
         try {
-            const response = await fetch('https://fbbackend-b4v6.onrender.com/login',{
-                method:"POST",
-                headers:{
-                    "content-type":"application/json"                },
-                body:JSON.stringify({
-                    username:username,
-                    password:password
+            const response = await fetch('https://fbbackend-b4v6.onrender.com/login', {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
                 })
             })
-            if(!response){
+            if (!response) {
+                setisLoading(false);
                 toast.error("Server is booting try after 2-3 min");
                 return;
             }
             const data = await response.json();
-            if(data.errormsg){
+            if (data.errormsg) {
+                setisLoading(false);
+                
                 toast.error(data.errormsg);
                 return;
             }
-            if(response.ok){
-                localStorage.setItem('token',data.token);
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                setisLoading(false);
+
                 navigate('/landing');
             }
-            else{
+            else {
                 toast.warning("server loading")
+                setisLoading(false);
+
             }
         } catch (error) {
+            setisLoading(false);
             toast.error("failed try after sometime");
         }
-        
+
     }
 
     // function to handle signup of user 
-    const signupsubmit = async(e) => {
+    const signupsubmit = async (e) => {
+        setisLoading(true);
         e.preventDefault();
         const username = signupUsername.current.value.trim(' ').toLowerCase();
         const password = signupPassword.current.value.trim(' ');
         const state = signupState.current.value;
-        if(!username||!password||!state){
+        if (!username || !password || !state) {
             toast.error("Invalid form fields")
+            setisLoading(false);
+
             return;
         }
-        if(password.length<6){
+        if (password.length < 6) {
+            setisLoading(false);
             toast.warning("password length too short");
             return;
         }
-        if(password.indexOf(' ')>0){
+        if (password.indexOf(' ') > 0) {
+            setisLoading(false);
             toast.warning("password cannot contain spaces");
             return;
         }
         try {
-            const response = await fetch('https://fbbackend-b4v6.onrender.com/create',{
-                method:"POST",
-                headers:{
-                    "content-type":"application/json"
+            const response = await fetch('https://fbbackend-b4v6.onrender.com/create', {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
                 },
-                body:JSON.stringify({
-                    username:username,
-                    password:password,
-                    state:state
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                    state: state
                 })
             })
-            if(!response){
+            if (!response) {
+                setisLoading(false);
                 toast.error("Server is booting wait for sometime");
                 return;
             }
             const data = await response.json();
-            if(data.errormsg){
+            if (data.errormsg) {
+                setisLoading(false);
                 toast.error(data.errormsg);
                 return;
             }
-            if(response.ok){
+            if (response.ok) {
                 console.log(data);
-                localStorage.setItem('token',data.token);
+                setisLoading(false);
+                localStorage.setItem('token', data.token);
                 navigate('/landing');
             }
-            else{
+            else {
+                setisLoading(false);
                 toast.warning("server loading")
             }
         } catch (error) {
+            setisLoading(false);
             toast.error("Issue in sending request try aftersometime")
         }
 
@@ -150,7 +173,20 @@ export default function Homepage() {
     const navigate = useNavigate();
     return (
         <div id='homepage-main'>
-            <ToastContainer/>
+            {
+                isLoading ? (<div className="loader-div">
+                    <div className="loader-set">
+                        <div className="loader">
+                            <Comment width="100" height="100" />
+                        </div>
+                        <div className="loader-caption">
+                            Please wait loading.....
+                        </div>
+                    </div>
+                </div>) : (<></>)
+            }
+
+            <ToastContainer />
             <div id="homepage-inner">
                 <div className="homepage-navbar">
                     <div className="homepage-navbar-imageHandler">
@@ -201,14 +237,14 @@ export default function Homepage() {
                             <input type="password" id='password' ref={signupPassword} onMouseOver={passwordshow} onMouseOut={passwordhide} />
                         </div>
                         <div className="homepage-login-agreement">
-                            By clicking Agree & Join or Continue, you agree to the LiveJob User Agreement, Privacy Policy, and Cookie Policy.
+                            By clicking Agree & Join or Continue, you agree to the Friend'sBook User Agreement, Privacy Policy, and Cookie Policy.
                         </div>
                         <button className="homepage-login-button" type="submit" >
                             Agree & SignUp
                         </button>
                         <hr className='homepage-hr' />
                         <div className="homepage-login-switch">
-                            Already on LiveJob? <span onClick={switchlogin}>Login.</span>
+                            Already on Friend'sBook? <span onClick={switchlogin}>Login.</span>
                         </div>
                     </form>)}
                     {l && (<form className="homepage-login-box-inner-1" onSubmit={loginsubmit}>
@@ -225,7 +261,7 @@ export default function Homepage() {
                         </button>
                         <hr className='homepage-hr' />
                         <div className="homepage-login-switch">
-                            New to LiveJob? <span onClick={switchlogin}>SignUp.</span>
+                            New to Friend'sBook? <span onClick={switchlogin}>SignUp.</span>
                         </div>
                     </form>)}
                 </div>)}

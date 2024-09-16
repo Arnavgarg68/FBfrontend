@@ -6,6 +6,7 @@ import profile from './materials/icons8-employee.png'
 import dummy from './materials/dummy.png'
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import { Comment } from 'react-loader-spinner'
 const Landing = () => {
     // states and variables to store friends and their value
     const [Suggested, setSuggested] = useState([]);
@@ -14,11 +15,13 @@ const Landing = () => {
     // const [Requested, setRequested] = useState([]);
     const [search, setsearch] = useState();
     const searchval = useRef(null);
+    const [isLoading,setisLoading] = useState(false);
     const navigate = useNavigate();
     
     
     //function handle onclick add friend
     const addfriend = async (friendname) => {
+        setisLoading(true);
         try {
             const response = await fetch('https://fbbackend-b4v6.onrender.com/addfriend', {
                 method: "POST",
@@ -29,15 +32,18 @@ const Landing = () => {
                 body: JSON.stringify({ friendname: friendname })
             })
             if (!response) {
+                setisLoading(false);
                 toast.error("failed");
                 return;
             }
             const data = await response.json();
             if(data.type==='token'){
+                setisLoading(false);
                 navigate('/');
                 return;
             }
             if (data.errormsg) {
+                setisLoading(false);
                 toast.error(data.errormsg);
                 return;
             }
@@ -47,6 +53,7 @@ const Landing = () => {
             load();
             toast.success("request sent successfully");
         } catch (error) {
+            setisLoading(false);
             toast.error(error);
         }
     }
@@ -54,7 +61,9 @@ const Landing = () => {
 
     //function handle accept/reject requests
     const decision = async (obj) => {
+        setisLoading(true);
         if (!obj?.friendname) {
+            setisLoading(false);
             toast.error("error login again");
             return;
         }
@@ -68,15 +77,18 @@ const Landing = () => {
                 body: JSON.stringify(obj)
             })
             if (!response) {
+                setisLoading(false);
                 toast.error("error connecting to server");
                 return;
             }
             const data = await response.json();
             if(data.type==='token'){
+                setisLoading(false);
                 navigate('/');
                 return;
             }
             if(data.errormsg){
+                setisLoading(false);
                 toast.error(data.errormsg);
                 return;
             }
@@ -84,6 +96,7 @@ const Landing = () => {
             load();
             return;
         } catch (error) {
+            setisLoading(false);
             toast.error(error);
         }
     }
@@ -92,7 +105,9 @@ const Landing = () => {
     //function to handle search people
     const searchfun = async (e) => {
         e.preventDefault();
+        setisLoading(true);
         if (!searchval.current.value.trim(' ')) {
+            setisLoading(false);
             toast.warning("enter valid username");
             return;
         }
@@ -108,21 +123,26 @@ const Landing = () => {
                 })
             })
             if (!response) {
+                setisLoading(false);
                 toast.error("error in fetching user");
                 return;
             }
             const data = await response.json();
             if(data.type==='token'){
+                setisLoading(false);
                 navigate('/');
                 return;
             }
             if (data.errormsg) {
+                setisLoading(false);
                 toast.error(data.errormsg);
                 return;
             }
             setsearch(data);
+            setisLoading(false);
             searchval.current.value="";
         } catch (error) {
+            setisLoading(false);
             toast.error(error);
         }
 
@@ -130,7 +150,9 @@ const Landing = () => {
 
     // function to handle unfriend click
     const handleunfriend = async(friendname)=>{
+        setisLoading(true);
         if(!friendname){
+            setisLoading(false);
             toast.error("Invalid argument");
             return;
         }
@@ -144,27 +166,32 @@ const Landing = () => {
                 body:JSON.stringify({friendname:friendname})
             });
             if(!response){
+                setisLoading(false);
                 toast.error("Something is wrong")
                 return;
             }
             const data = await response.json();
             if(data.type==='token'){
+                setisLoading(false);
                 navigate('/');
                 return;
             }
             if(data.errormsg){
+                setisLoading(false);
                 toast.error(data.errormsg);
                 return;
             }
             load();
             toast.success("unfriend successfull")
         } catch (error) {
-            
+            setisLoading(false);
+            toast.error(error);            
         }
     }
 
     // function to load all friends list
     const load = async () => {
+        setisLoading(true);
         try {
             const response = await fetch('https://fbbackend-b4v6.onrender.com/list', {
                 method: "GET",
@@ -175,15 +202,18 @@ const Landing = () => {
             })
             if (!response) {
                 toast.error("login again");
+                setisLoading(false);
                 return;
             }
             const data = await response.json();
             if(data.type==='token'){
+                setisLoading(false);
                 navigate('/');
                 return;
             }
             if (data?.errormsg) {
                 // navigate('/home');
+                setisLoading(false);
                 toast.error(data.error);
                 return;
             }
@@ -196,8 +226,11 @@ const Landing = () => {
              if(search){
                 setsearch();
             }
+            setisLoading(false);
         } catch (error) {
-            console.log(error)
+            setisLoading(false);
+            console.log(error);
+            toast.error(error); 
         }
     }
     useEffect(() => {
@@ -205,6 +238,18 @@ const Landing = () => {
     }, [])
     return (
         <div className='landing-main'>
+            {
+                isLoading ? (<div className="loader-div">
+                    <div className="loader-set">
+                        <div className="loader">
+                            <Comment width="100" height="100" />
+                        </div>
+                        <div className="loader-caption">
+                            Please wait loading.....
+                        </div>
+                    </div>
+                </div>) : (<></>)
+            }
             <ToastContainer />
             <div className="landing-inner">
                 <div className='landing-nav'>

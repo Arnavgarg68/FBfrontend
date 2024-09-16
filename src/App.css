@@ -2,4 +2,28 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'poppins';
+}
+.loader-div{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.625);
+    backdrop-filter: blur(5px);
+    z-index: 18;
+    top: 0;
+    left: 0;
+}
+.loader-set{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.loader-caption{
+    font-size: 2rem;
 }
