@@ -6,12 +6,14 @@ import profile from './materials/icons8-employee.png'
 import dummy from './materials/dummy.png'
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import { Comment } from 'react-loader-spinner'
+import { Comment } from 'react-loader-spinner';
+import reloadicon from './materials/reload.png'
 const Landing = () => {
     // states and variables to store friends and their value
     const [Suggested, setSuggested] = useState([]);
     const [Friends, setFriends] = useState([]);
     const [Pending, setPending] = useState([]);
+    const [usernameprofile,setusernameprofile] = useState("");
     // const [Requested, setRequested] = useState([]);
     const [search, setsearch] = useState();
     const searchval = useRef(null);
@@ -217,7 +219,7 @@ const Landing = () => {
                 toast.error(data.error);
                 return;
             }
-            console.log(data)
+            setusernameprofile(data.username);
             const fof = data.friendsOfFriends.filter(us=>us.username!=data.username)
             setPending(() => data.friendsPending);
             // setRequested(() => data.friendsRequested);
@@ -256,9 +258,17 @@ const Landing = () => {
                     <div className="landing-logo">
                         <img src={Logo} alt="" />
                     </div>
+                    <div className="reload-btn" title='click to refresh content' onClick={load}>
+                        <span>Refresh</span>
+                        <img src={reloadicon} alt="" />
+                    </div>
+                    <div className="profile-set">
+                        <span>{usernameprofile}</span>
                     <div className="landing-profile">
                         <img src={profile} alt="" />
                     </div>
+                    </div>
+                    
                 </div>
                 <div className="landing-container">
                     <div className="landing-search">
